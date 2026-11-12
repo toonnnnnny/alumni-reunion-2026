@@ -1,0 +1,10 @@
+# รันทั้งเว็บด้วยคำสั่งเดียว:  docker compose up --build   แล้วเปิด http://localhost:3000
+services:
+  web:
+    build:
+      context: .
+      args:
+        NEXT_PUBLIC_API_BASE: ${NEXT_PUBLIC_API_BASE:-}
+    ports:
+      - "3000:3000"
+    restart: unless-stopped

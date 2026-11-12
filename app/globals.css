@@ -1,0 +1,35 @@
+/* ฟอนต์ Prompt โหลดจาก Google Fonts ตอนเปิดเว็บ */
+@import url("https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap");
+@import "tailwindcss";
+
+/* สีหลักให้ตรงกับ Figma ใช้เป็นคลาส เช่น bg-navy text-muted border-line */
+@theme {
+  --font-sans: "Prompt", ui-sans-serif, system-ui, sans-serif;
+  --color-navy: #253448;
+  --color-navy-soft: #e8edf2;
+  --color-paper: #f6f5f3;
+  --color-line: #e3e5e8;
+  --color-muted: #6b7280;
+  --color-ink: #222222;
+  --color-ok: #5e7f67;
+  --color-ok-soft: #ebf0ec;
+  --color-warn: #c28b45;
+  --color-warn-soft: #faf0e1;
+  --color-bad: #b85c5c;
+  --color-bad-soft: #f6e6e6;
+}
+
+html,
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ซ่อน scrollbar ของแถบแท็บที่เลื่อนแนวนอน */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}

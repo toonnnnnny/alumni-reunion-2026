@@ -1,0 +1,52 @@
+"use client";
+// บัตรของฉัน: ทุกใบที่ซื้อ (ใบที่ 1 ของเรา + ใบของผู้เข้าร่วมคนอื่น) แยกแท็บ ยังไม่เช็กอิน / เช็กอินแล้ว
+
+import Link from "next/link";
+import { useState } from "react";
+import { ChevronRight, Ticket } from "lucide-react";
+import { useMyData } from "@/lib/useMyData";
+import { num } from "@/lib/format";
+import { TopBar, MobileBody } from "@/components/shells";
+import { Badge, ButtonLink, EmptyState, Loading, Tabs } from "@/components/ui";
+
+export default function MyTickets() {
+  const { data, isLoading } = useMyData();
+  const [tab, setTab] = useState<"wait" | "in">("wait");
+  const tickets = data?.tickets ?? [];
+  const list = tickets.filter((t) => (tab === "in" ? t.checkedIn : !t.checkedIn));
+  const pending = (data?.orders ?? []).filter((o) => o.type === "ticket" && o.status !== "paid");
+
+  return (
+    <>
+      <TopBar title="บัตรของฉัน" subtitle={`${tickets.length} ใบ`} right={<ButtonLink href="/user/tickets/buy" variant="ghost" className="min-h-10">+ ซื้อบัตร</ButtonLink>} />
+      <MobileBody>
+        {pending.map((o) => (
+          <Link key={o.id} href={`/user/orders/${o.id}`} className="block rounded-2xl bg-warn-soft p-4 text-sm text-warn">
+            {o.orderNo} · {o.status === "rejected" ? "ชำระเงินไม่ผ่าน แตะเพื่อส่งสลิปใหม่" : "รอ Admin ตรวจสอบสลิป บัตรจะขึ้นที่นี่หลังยืนยัน"}
+          </Link>
+        ))}
+        <Tabs
+          value={tab}
+          onChange={setTab}
+          tabs={[
+            { value: "wait", label: "ยังไม่เช็กอิน", count: tickets.filter((t) => !t.checkedIn).length },
+            { value: "in", label: "เช็กอินแล้ว", count: tickets.filter((t) => t.checkedIn).length },
+          ]}
+        />
+        {isLoading && <Loading />}
+        {!isLoading && list.length === 0 && <EmptyState title="ไม่มีบัตรในแท็บนี้" />}
+        {list.map((t) => (
+          <Link key={t.id} href={`/user/qr?t=${t.ticketNo}`} className="flex items-center gap-4 rounded-2xl border border-line bg-white p-4">
+            <span className="grid size-12 place-items-center rounded-xl bg-navy text-white"><Ticket /></span>
+            <div className="min-w-0 flex-1">
+              <p className="font-semibold">{t.ticketNo} · {t.holderName}</p>
+              <p className="text-xs text-muted">คงเหลือ {num(t.tokens)} โทเคน</p>
+              <div className="mt-1.5">{t.holderIndex === 1 ? <Badge tone="navy">บัตรของคุณ</Badge> : <Badge tone="amber">ผู้เข้าร่วม {t.holderIndex}</Badge>}</div>
+            </div>
+            <ChevronRight className="size-5 text-muted" />
+          </Link>
+        ))}
+      </MobileBody>
+    </>
+  );
+}
