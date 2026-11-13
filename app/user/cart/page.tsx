@@ -14,7 +14,6 @@ import { Steps } from "@/components/Steps";
 import { PaymentStep } from "@/components/PaymentStep";
 import { ButtonLink, Button, Card, EmptyState, ErrorText, InfoRow, Stepper, TextArea, cx } from "@/components/ui";
 
-const SHIPPING_FEE = 50;
 
 export default function Cart() {
   const router = useRouter();
@@ -26,7 +25,7 @@ export default function Cart() {
   const [error, setError] = useState("");
 
   if (!account) return null;
-  const grandTotal = total + (delivery === "ship" ? SHIPPING_FEE : 0);
+  const grandTotal = total; // ไม่มีค่าส่ง ทั้งจัดส่งและรับหน้างาน
 
   function goPay() {
     if (delivery === "ship" && address.trim().length < 10) return setError("กรอกที่อยู่จัดส่งให้ครบ");
@@ -85,7 +84,7 @@ export default function Cart() {
               {(["ship", "pickup"] as const).map((d) => (
                 <button key={d} onClick={() => setDelivery(d)} className={cx("rounded-2xl border p-4 text-left", delivery === d ? "border-navy bg-navy-soft" : "border-line bg-white")}>
                   <p className="font-semibold">{d === "ship" ? "จัดส่งถึงบ้าน" : "รับที่หน้างาน"}</p>
-                  <p className="text-xs text-muted">{d === "ship" ? `ค่าส่ง ${SHIPPING_FEE} บาท` : "ฟรี · รับวันงานที่จุด Staff"}</p>
+                  <p className="text-xs text-muted">{d === "ship" ? "ส่งฟรี · ส่งตามที่อยู่ที่กรอก" : "ฟรี · รับวันงานที่จุด Staff"}</p>
                 </button>
               ))}
             </div>
@@ -96,7 +95,6 @@ export default function Cart() {
             )}
             <Card>
               <InfoRow label="ราคาสินค้า" value={baht(total)} />
-              <InfoRow label="ค่าจัดส่ง" value={delivery === "ship" ? baht(SHIPPING_FEE) : "ฟรี"} />
               <InfoRow label="ยอดชำระ" value={baht(grandTotal)} strong />
             </Card>
             <ErrorText text={error} />
