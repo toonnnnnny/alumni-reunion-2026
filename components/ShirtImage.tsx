@@ -20,7 +20,7 @@ export function ShirtImage({ name, className = "", iconClass = "size-16" }: { na
     <div className={`grid place-items-center overflow-hidden bg-navy-soft text-navy ${className}`}>
       {src ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={src} alt={name} loading="lazy" className="size-full object-cover" />
+        <img src={src} alt={name} className="size-full object-cover" />
       ) : (
         <ShirtIcon className={iconClass} strokeWidth={1.2} />
       )}

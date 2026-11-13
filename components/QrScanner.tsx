@@ -110,7 +110,8 @@ export function QrScanner({ onResult, manualLabel = "สแกนไม่ได
     e.preventDefault();
     if (!manualCode.trim()) return;
     stopCamera();
-    onResult(manualCode.trim().toUpperCase());
+    // ไม่แปลงเป็นตัวพิมพ์ใหญ่: ลิงก์บัตร /t/<token> แยกตัวพิมพ์เล็ก-ใหญ่ ส่วนเลขบัตร/เลขคำสั่งซื้อฝั่งค้นหาเทียบแบบไม่สนตัวพิมพ์อยู่แล้ว
+    onResult(manualCode.trim());
   }
 
   const message: Record<Exclude<CameraState, "scanning">, string> = {

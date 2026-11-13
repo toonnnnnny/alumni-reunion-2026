@@ -79,7 +79,7 @@ export default function PaymentDetail({ params }: { params: Promise<{ id: string
             <InfoRow label="เลขคำสั่งซื้อ" value={order.orderNo} />
             <InfoRow label="ผู้ซื้อ" value={<Link href={`/admin/buyers/${buyer.id}`} className="text-navy underline">{buyer.name}</Link>} />
             <InfoRow label="อีเมล / เบอร์" value={`${buyer.email} · ${buyer.phone}`} />
-            <InfoRow label="ส่งสลิปเมื่อ" value={dateTime(order.updatedAt)} />
+            <InfoRow label={order.status === "pending_slip" ? "ส่งสลิปเมื่อ" : "อัปเดตล่าสุด"} value={dateTime(order.updatedAt)} />
             {order.type === "ticket" ? (
               order.attendees.map((a, i) => <InfoRow key={i} label={`ผู้เข้าร่วม ${i + 1}`} value={`${a.name} · ${a.email}`} />)
             ) : (
