@@ -1,6 +1,7 @@
 "use client";
 // เสื้อและสต็อก: ดูสต็อกแยกสี/ไซซ์ แก้จำนวนได้ทันที + เพิ่มเสื้อแบบใหม่
 
+import { ShirtThumb } from "@/components/ShirtImage";
 import { useState } from "react";
 import { Plus } from "lucide-react";
 import { createRecord, listRecords, nowIso, updateRecord } from "@/lib/api";
@@ -74,9 +75,12 @@ export default function Shirts() {
         {data.map((shirt) => (
           <Card key={shirt.id} className="overflow-x-auto">
             <div className="mb-3 flex items-start justify-between gap-3">
-              <div>
+              <div className="flex items-center gap-3">
+                <ShirtThumb name={shirt.name} size="size-16" />
+                <div>
                 <p className="font-semibold">{shirt.name}</p>
                 <p className="text-sm text-muted">{baht(shirt.price)} · คงเหลือ {totalStock(shirt.stock)} ตัว</p>
+                </div>
               </div>
               <Button size="sm" variant="ghost" onClick={() => setEditing(JSON.parse(JSON.stringify(shirt)))}>แก้ไขสต็อก</Button>
             </div>
@@ -125,7 +129,7 @@ export default function Shirts() {
           <Field label="ชื่อเสื้อ" value={newShirt.name} onChange={(e) => setNewShirt({ ...newShirt, name: e.target.value })} />
           <Field label="ราคา (บาท)" inputMode="numeric" value={newShirt.price} onChange={(e) => setNewShirt({ ...newShirt, price: e.target.value.replace(/\D/g, "") })} />
           <Field label="รายละเอียด" value={newShirt.detail} onChange={(e) => setNewShirt({ ...newShirt, detail: e.target.value })} />
-          <Field label="สี (คั่นด้วย ,)" placeholder="กรมท่า, ขาว" value={newShirt.colors} onChange={(e) => setNewShirt({ ...newShirt, colors: e.target.value })} hint="สร้างแล้วค่อยกรอกจำนวนสต็อกแต่ละไซซ์" />
+          <Field label="สี (คั่นด้วย ,)" placeholder="กรม, ขาว" value={newShirt.colors} onChange={(e) => setNewShirt({ ...newShirt, colors: e.target.value })} hint="สร้างแล้วค่อยกรอกจำนวนสต็อกแต่ละไซซ์" />
         </div>
       </Modal>
     </AdminFrame>

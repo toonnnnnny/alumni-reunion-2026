@@ -1,6 +1,7 @@
 "use client";
 // ตะกร้า -> เลือกวิธีรับสินค้า (จัดส่ง/รับหน้างาน) -> ชำระเงิน/ส่งสลิป -> สร้างคำสั่งซื้อ
 
+import { ShirtThumb } from "@/components/ShirtImage";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Trash2 } from "lucide-react";
@@ -65,6 +66,7 @@ export default function Cart() {
           <>
             {items.map((it, i) => (
               <Card key={i} className="flex items-center gap-3">
+                <ShirtThumb name={it.name} />
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-semibold">{it.name}</p>
                   <p className="text-xs text-muted">{it.color} · {it.size} · {baht(it.price)}</p>

@@ -64,10 +64,10 @@ const shops: Shop[] = [
 const fullStock = (n: number) => ({ S: n, M: n + 4, L: n + 4, XL: n, XXL: Math.max(0, n - 6) });
 
 const shirts: Shirt[] = [
-  { id: "4", kind: "shirt", name: "เสื้อยืดรุ่น Classic", price: 350, detail: "ผ้าคอตตอน 100% สกรีนโลโก้งานรุ่นด้านหน้า", colors: ["กรมท่า", "ขาว"], stock: { "กรมท่า": fullStock(12), "ขาว": fullStock(10) }, createdAt: t("2026-11-15T09:00:00+07:00") },
-  { id: "5", kind: "shirt", name: "เสื้อโปโลรุ่น 2026", price: 450, detail: "ผ้าจูติ ปักโลโก้ที่อก ใส่ได้ทั้งงานและทำงาน", colors: ["กรมท่า", "เทา"], stock: { "กรมท่า": fullStock(8), "เทา": fullStock(6) }, createdAt: t("2026-11-15T09:00:00+07:00") },
+  { id: "4", kind: "shirt", name: "เสื้อยืดรุ่น Classic", price: 350, detail: "ผ้าคอตตอน 100% สกรีนโลโก้งานรุ่นด้านหน้า", colors: ["กรม", "ขาว"], stock: { "กรม": fullStock(12), "ขาว": fullStock(10) }, createdAt: t("2026-11-15T09:00:00+07:00") },
+  { id: "5", kind: "shirt", name: "เสื้อโปโลรุ่น 2026", price: 450, detail: "ผ้าจูติ ปักโลโก้ที่อก ใส่ได้ทั้งงานและทำงาน", colors: ["กรม", "เทา"], stock: { "กรม": fullStock(8), "เทา": fullStock(6) }, createdAt: t("2026-11-15T09:00:00+07:00") },
   { id: "6", kind: "shirt", name: "เสื้อ Oversize", price: 390, detail: "ทรงหลวม สกรีนลายด้านหลัง", colors: ["ดำ", "ครีม"], stock: { "ดำ": fullStock(10), "ครีม": fullStock(2) }, createdAt: t("2026-11-15T09:00:00+07:00") },
-  { id: "7", kind: "shirt", name: "เสื้อแขนยาว", price: 490, detail: "ผ้าหนานุ่ม เหมาะกับอากาศเย็นเดือนธันวาคม", colors: ["กรมท่า"], stock: { "กรมท่า": fullStock(6) }, createdAt: t("2026-11-15T09:00:00+07:00") },
+  { id: "7", kind: "shirt", name: "เสื้อแขนยาว", price: 490, detail: "ผ้าหนานุ่ม เหมาะกับอากาศเย็นเดือนธันวาคม", colors: ["กรม"], stock: { "กรม": fullStock(6) }, createdAt: t("2026-11-15T09:00:00+07:00") },
 ];
 
 const orders: Order[] = [
@@ -82,7 +82,7 @@ const orders: Order[] = [
   },
   {
     id: "9", kind: "order", orderNo: "ORD-240002", userId: "2", type: "shirt", attendees: [],
-    items: [{ shirtId: "4", name: "เสื้อยืดรุ่น Classic", color: "กรมท่า", size: "L", qty: 2, price: 350 }],
+    items: [{ shirtId: "4", name: "เสื้อยืดรุ่น Classic", color: "กรม", size: "L", qty: 2, price: 350 }],
     total: 700, slipImage: fakeSlip("700.00", "1 ธ.ค. 69 · 10:12"), status: "paid", rejectReason: "",
     delivery: "ship", address: "TEST TEST1 · 99/9 ถ.พหลโยธิน แขวงลาดยาว เขตจตุจักร กรุงเทพฯ 10900 · 081-234-5678",
     shipStatus: "wait_pack", tracking: "", createdAt: t("2026-12-01T10:12:00+07:00"), updatedAt: t("2026-12-01T10:30:00+07:00"),

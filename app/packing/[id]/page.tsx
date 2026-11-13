@@ -2,6 +2,7 @@
 // รายละเอียดคำสั่งซื้อที่ต้องแพ็ค: เช็กรายการ -> กด "แพ็คเสร็จ" -> กรอกเลขพัสดุ -> "จัดส่งแล้ว"
 // ทุกขั้นแจ้งเตือนผู้ซื้ออัตโนมัติ
 
+import { ShirtThumb } from "@/components/ShirtImage";
 import { use, useState } from "react";
 import { getRecord } from "@/lib/api";
 import { moveShip } from "@/lib/actions";
@@ -49,7 +50,7 @@ export default function PackingDetail({ params }: { params: Promise<{ id: string
         <Card>
           <p className="mb-1 font-semibold">รายการที่ต้องแพ็ค</p>
           {order.items.map((it, i) => (
-            <InfoRow key={i} label={`${it.name} · สี${it.color}`} value={`ไซซ์ ${it.size} × ${it.qty}`} />
+            <div key={i} className="flex items-center gap-3"><ShirtThumb name={it.name} size="size-10" /><div className="flex-1"><InfoRow label={`${it.name} · สี${it.color}`} value={`ไซซ์ ${it.size} × ${it.qty}`} /></div></div>
           ))}
         </Card>
         <Card>

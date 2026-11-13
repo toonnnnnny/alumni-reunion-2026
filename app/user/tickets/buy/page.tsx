@@ -85,7 +85,7 @@ export default function BuyTicket() {
                 <p className="text-xl font-bold">1,000<span className="text-xs font-normal text-muted"> บาท/ใบ</span></p>
               </div>
               <ul className="mt-3 space-y-1.5 text-sm text-muted">
-                <li>✓ รวม {BONUS_TOKENS} โทเคนต่อบัตร 1 ใบ</li>
+                <li>✓ บัตรราคา 1,000 ฟรี! โทเคนใช้จ่ายในงาน {BONUS_TOKENS} โทเคนฟรี</li>
                 <li>✓ QR Code ของบัตรส่งทางอีเมล หลัง Admin ยืนยันการชำระเงิน</li>
                 <li>ⓘ บัตรไม่สามารถยกเลิกได้หลังชำระเงิน</li>
               </ul>

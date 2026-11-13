@@ -1,6 +1,7 @@
 "use client";
 // ส่งมอบเสื้อ (คำสั่งซื้อแบบรับที่หน้างาน): สแกน/พิมพ์เลขคำสั่งซื้อ -> ตรวจรายการ -> ยืนยันส่งมอบ
 
+import { ShirtThumb } from "@/components/ShirtImage";
 import { useState } from "react";
 import { CheckCircle2 } from "lucide-react";
 import { listRecords } from "@/lib/api";
@@ -65,7 +66,7 @@ export default function Pickup() {
                 {order.shipStatus && <Badge tone={shipLabel[order.shipStatus].tone}>{shipLabel[order.shipStatus].text}</Badge>}
               </div>
               {order.items.map((it, i) => (
-                <InfoRow key={i} label={`${it.name} · ${it.color}`} value={`ไซซ์ ${it.size} × ${it.qty}`} />
+                <div key={i} className="flex items-center gap-3"><ShirtThumb name={it.name} size="size-10" /><div className="flex-1"><InfoRow label={`${it.name} · ${it.color}`} value={`ไซซ์ ${it.size} × ${it.qty}`} /></div></div>
               ))}
             </Card>
             <ErrorText text={problem || error} />

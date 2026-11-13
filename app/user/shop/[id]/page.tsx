@@ -3,7 +3,7 @@
 
 import { useRouter } from "next/navigation";
 import { use, useState } from "react";
-import { Shirt as ShirtIcon } from "lucide-react";
+import { ShirtImage } from "@/components/ShirtImage";
 import { getRecord } from "@/lib/api";
 import { useCart } from "@/lib/cart";
 import { usePolling } from "@/lib/usePolling";
@@ -36,9 +36,7 @@ export default function ShirtDetail({ params }: { params: Promise<{ id: string }
     <>
       <TopBar title={shirt.name} back="/user/shop" />
       <MobileBody>
-        <div className="grid aspect-[4/3] place-items-center rounded-3xl bg-navy-soft text-navy">
-          <ShirtIcon className="size-28" strokeWidth={1} />
-        </div>
+        <ShirtImage name={shirt.name} className="aspect-square rounded-3xl" iconClass="size-28" />
         <Card>
           <p className="text-lg font-bold">{shirt.name}</p>
           <p className="text-2xl font-bold">{baht(shirt.price)}</p>

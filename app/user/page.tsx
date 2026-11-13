@@ -65,7 +65,7 @@ export default function UserHome() {
             <span className="grid size-12 place-items-center rounded-xl bg-navy text-white"><Ticket /></span>
             <div className="flex-1">
               <p className="font-semibold">บัตรเข้างาน</p>
-              <p className="text-sm text-muted">1,000 บาท / ใบ · รวม 50 โทเคน</p>
+              <p className="text-sm text-muted">1,000 บาท / ใบ · ฟรี 50 โทเคนใช้จ่ายในงาน</p>
             </div>
           </div>
           <ButtonLink href="/user/tickets/buy" full className="mt-4">ซื้อบัตร <ChevronRight className="size-4" /></ButtonLink>

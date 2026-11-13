@@ -2,7 +2,8 @@
 // ร้านเสื้อรุ่น: รายการเสื้อทั้งหมดจาก MockAPI ซื้อได้แม้ไม่มีบัตร
 
 import Link from "next/link";
-import { ShoppingCart, Shirt as ShirtIcon } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
+import { ShirtImage } from "@/components/ShirtImage";
 import { listRecords } from "@/lib/api";
 import { useCart } from "@/lib/cart";
 import { usePolling } from "@/lib/usePolling";
@@ -35,9 +36,7 @@ export default function Shop() {
             const left = totalStock(shirt.stock);
             return (
               <Link key={shirt.id} href={`/user/shop/${shirt.id}`} className="overflow-hidden rounded-2xl border border-line bg-white">
-                <div className="grid aspect-square place-items-center bg-navy-soft text-navy">
-                  <ShirtIcon className="size-16" strokeWidth={1.2} />
-                </div>
+                <ShirtImage name={shirt.name} className="aspect-square" />
                 <div className="p-3">
                   <p className="truncate text-sm font-semibold">{shirt.name}</p>
                   <p className="font-bold">{baht(shirt.price)}</p>
