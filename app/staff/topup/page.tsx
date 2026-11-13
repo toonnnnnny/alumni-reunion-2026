@@ -1,6 +1,6 @@
 "use client";
-// เติมโทเคน: สแกนบัตร -> กรอกจำนวน + เลือกวิธีรับเงิน (เงินสด/โอน) -> ยืนยัน -> สำเร็จ
-// บันทึกวิธีรับเงินไว้ เพื่อให้ Admin กระทบยอดเงินสดที่ Staff ต้องส่งคืนได้
+// เติมโทเคน: สแกนบัตร -> กรอกจำนวน -> ลูกค้าสแกน QR โอนเข้าบัญชีของงาน (Admin) -> Staff ตรวจหน้าจอโอนสำเร็จ -> ยืนยัน
+// ไม่รับเงินสด ทุกรายการบันทึกเป็น "โอน" ให้ Admin กระทบยอดกับบัญชีธนาคารได้
 
 import { useState } from "react";
 import { CheckCircle2 } from "lucide-react";
@@ -10,6 +10,7 @@ import { num } from "@/lib/format";
 import type { Ticket } from "@/lib/types";
 import { TopBar, TabletBody } from "@/components/shells";
 import { QrScanner } from "@/components/QrScanner";
+import { PayQrCard } from "@/components/PayQrCard";
 import { TicketHolderCard } from "@/components/TicketHolderCard";
 import { Button, Card, ErrorText, InfoRow, Modal, TokenPolicy, cx } from "@/components/ui";
 
@@ -20,7 +21,7 @@ export default function TopUp() {
   const [stage, setStage] = useState<"scan" | "amount" | "done">("scan");
   const [ticket, setTicket] = useState<Ticket | null>(null);
   const [amount, setAmount] = useState("");
-  const [method, setMethod] = useState<"cash" | "transfer">("cash");
+  const [slipChecked, setSlipChecked] = useState(false); // Staff ตรวจหน้าจอโอนสำเร็จบนมือถือลูกค้าแล้ว
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -39,7 +40,7 @@ export default function TopUp() {
     if (!ticket || !account) return;
     setBusy(true);
     try {
-      setTicket(await topUp(ticket, value, method, account));
+      setTicket(await topUp(ticket, value, "transfer", account));
       setConfirmOpen(false);
       setStage("done");
     } catch (e) {
@@ -53,7 +54,7 @@ export default function TopUp() {
   function reset() {
     setTicket(null);
     setAmount("");
-    setMethod("cash");
+    setSlipChecked(false);
     setError("");
     setStage("scan");
   }
@@ -93,24 +94,21 @@ export default function TopUp() {
                     </button>
                   ))}
                 </div>
-                <p className="mb-2 mt-4 text-sm font-semibold">ลูกค้าจ่ายเงินด้วย</p>
-                <div className="grid grid-cols-2 gap-2">
-                  {(["cash", "transfer"] as const).map((m) => (
-                    <button key={m} onClick={() => setMethod(m)} className={cx("rounded-xl border py-3 text-sm font-semibold", method === m ? "border-navy bg-navy text-white" : "border-line")}>
-                      {m === "cash" ? "เงินสด" : "โอนเข้าบัญชีงาน"}
-                    </button>
-                  ))}
-                </div>
-                {method === "transfer" && <p className="mt-2 text-xs text-muted">ให้ลูกค้าสแกน QR บัญชีงาน แล้วเช็กยอดเข้าจากแอปธนาคารของจุดบริการก่อนกดเติม</p>}
+                <p className="mt-3 text-xs text-muted">ไม่รับเงินสด · ลูกค้าโอนเข้าบัญชีของงานผ่าน QR ด้านล่างเท่านั้น</p>
               </Card>
+              {value > 0 && <PayQrCard amount={value} size={180} />}
+              <label className="flex items-start gap-3 rounded-2xl border border-line bg-white p-4 text-sm">
+                <input type="checkbox" checked={slipChecked} onChange={(e) => setSlipChecked(e.target.checked)} className="mt-0.5 size-5 accent-[var(--color-navy)]" />
+                <span>ตรวจหน้าจอโอนสำเร็จบนมือถือลูกค้าแล้ว ชื่อบัญชีปลายทางเป็น ALUMNI REUNION 2026 และยอดตรงกับที่เติม</span>
+              </label>
               <Card>
                 <InfoRow label="ยอดเดิม" value={`${num(ticket.tokens)} โทเคน`} />
                 <InfoRow label="เติมเพิ่ม" value={`+${num(value)} โทเคน`} tone="green" />
-                <InfoRow label="รับเงิน" value={`${num(value)} บาท (${method === "cash" ? "เงินสด" : "โอน"})`} />
+                <InfoRow label="ลูกค้าโอน" value={`${num(value)} บาท`} />
                 <InfoRow label="ยอดใหม่" value={`${num(ticket.tokens + value)} โทเคน`} strong />
               </Card>
               <ErrorText text={error} />
-              <Button full size="lg" disabled={value <= 0} onClick={() => setConfirmOpen(true)}>ตรวจสอบรายการ</Button>
+              <Button full size="lg" disabled={value <= 0 || !slipChecked} onClick={() => setConfirmOpen(true)}>ตรวจสอบรายการ</Button>
             </div>
           </div>
         )}
@@ -121,7 +119,7 @@ export default function TopUp() {
             <h2 className="text-2xl font-bold">เติมโทเคนสำเร็จ</h2>
             <p className="text-muted">{ticket.holderName} · {ticket.ticketNo}</p>
             <p className="text-4xl font-bold">{num(ticket.tokens)} <span className="text-base font-normal text-muted">โทเคน</span></p>
-            <p className="text-sm text-muted">รับ{method === "cash" ? "เงินสด" : "โอน"} {num(value)} บาท</p>
+            <p className="text-sm text-muted">ลูกค้าโอนเข้าบัญชีของงาน {num(value)} บาท</p>
             <Button full size="lg" onClick={reset}>เติมให้คนถัดไป</Button>
           </div>
         )}
@@ -143,7 +141,7 @@ export default function TopUp() {
             <InfoRow label="ผู้เข้าร่วม" value={ticket.holderName} />
             <InfoRow label="เลขบัตร" value={ticket.ticketNo} />
             <InfoRow label="เติมเพิ่ม" value={`+${num(value)} โทเคน`} tone="green" />
-            <InfoRow label="รับเงิน" value={`${num(value)} บาท · ${method === "cash" ? "เงินสด" : "โอน"}`} />
+            <InfoRow label="ลูกค้าโอน" value={`${num(value)} บาท · เข้าบัญชีของงาน`} />
             <InfoRow label="ยอดใหม่" value={`${num(ticket.tokens + value)} โทเคน`} strong />
             <p className="mt-3 rounded-xl bg-warn-soft p-3 text-xs text-warn">โทเคนแลกคืนเป็นเงินสดไม่ได้ · ใช้ได้เฉพาะภายในงานวันที่ 15 ธ.ค. 2569</p>
           </>

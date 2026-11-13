@@ -1,5 +1,6 @@
 "use client";
-// รายการเติมโทเคนทั้งหมด: ดูว่าโทเคนเข้าบัตร/ผู้ใช้คนไหน เติมโดย Staff คนไหน รับเงินแบบไหน
+// รายการเติมโทเคนทั้งหมด: ดูว่าโทเคนเข้าบัตร/ผู้ใช้คนไหน เติมโดย Staff คนไหน
+// ลูกค้าโอนเข้าบัญชีของงานทุกรายการ (ไม่รับเงินสด) Admin ใช้หน้านี้กระทบยอดกับบัญชีธนาคาร
 // การ์ดสรุปมีแค่ 2 ใบ (โทเคนที่เติมวันนี้, รายการเติมวันนี้) เพื่อไม่ให้สับสน
 
 import Link from "next/link";
@@ -9,11 +10,10 @@ import { usePolling } from "@/lib/usePolling";
 import { dateTime, isToday, num } from "@/lib/format";
 import type { Transaction } from "@/lib/types";
 import { AdminFrame } from "@/components/AdminFrame";
-import { Badge, Card, EmptyState, InfoRow, Loading, Modal, StatCard, Tabs } from "@/components/ui";
+import { Badge, Card, EmptyState, InfoRow, Loading, Modal, StatCard } from "@/components/ui";
 import { ReceiptText, Wallet } from "lucide-react";
 
 export default function Topups() {
-  const [method, setMethod] = useState<"all" | "cash" | "transfer">("all");
   const [selected, setSelected] = useState<Transaction | null>(null);
   const { data, isLoading } = usePolling(async () => {
     const [txs, tickets, accounts] = await Promise.all([listRecords("tx"), listRecords("ticket"), listAccounts()]);
@@ -22,7 +22,7 @@ export default function Topups() {
 
   if (isLoading || !data) return <AdminFrame title="รายการเติมโทเคน"><Loading /></AdminFrame>;
   const today = data.topups.filter((t) => isToday(t.createdAt));
-  const list = method === "all" ? data.topups : data.topups.filter((t) => t.method === method);
+  const list = data.topups;
 
   // หาเจ้าของบัตรและบัญชีผู้ซื้อของรายการเติม
   const ticketOf = (no: string) => data.tickets.find((t) => t.ticketNo === no);
@@ -35,14 +35,14 @@ export default function Topups() {
         <StatCard label="โทเคนที่เติมวันนี้" value={num(today.reduce((s, t) => s + t.amount, 0))} unit="โทเคน" icon={<Wallet className="size-5" />} />
         <StatCard label="รายการเติมวันนี้" value={today.length} unit="รายการ" icon={<ReceiptText className="size-5" />} />
       </div>
-      <Tabs value={method} onChange={setMethod} tabs={[{ value: "all", label: "ทั้งหมด", count: data.topups.length }, { value: "cash", label: "เงินสด", count: data.topups.filter((t) => t.method === "cash").length }, { value: "transfer", label: "โอน", count: data.topups.filter((t) => t.method === "transfer").length }]} />
+      <p className="text-sm text-muted">ลูกค้าโอนเข้าบัญชีของงานทุกรายการ ใช้ยอดในหน้านี้กระทบกับรายการเงินเข้าในบัญชีธนาคาร</p>
       {list.length === 0 ? (
         <EmptyState title="ยังไม่มีรายการเติม" />
       ) : (
         <Card className="overflow-x-auto p-0">
           <table className="w-full min-w-[820px] text-sm">
             <thead className="bg-paper text-left text-muted">
-              <tr>{["เลขรายการ", "บัตร / ผู้ถือบัตร", "บัญชีผู้ซื้อ", "จำนวน", "รับเงิน", "Staff", "เวลา"].map((h) => <th key={h} className="px-5 py-3 font-medium">{h}</th>)}</tr>
+              <tr>{["เลขรายการ", "บัตร / ผู้ถือบัตร", "บัญชีผู้ซื้อ", "จำนวน", "ชำระโดย", "Staff", "เวลา"].map((h) => <th key={h} className="px-5 py-3 font-medium">{h}</th>)}</tr>
             </thead>
             <tbody>
               {list.map((t) => (
@@ -51,7 +51,7 @@ export default function Topups() {
                   <td className="px-5 py-3.5">{t.ticketNo} · {ticketOf(t.ticketNo)?.holderName}</td>
                   <td className="px-5 py-3.5">{buyerOf(t.ticketNo)?.name ?? "-"}</td>
                   <td className="px-5 py-3.5 font-semibold text-ok">+{num(t.amount)}</td>
-                  <td className="px-5 py-3.5"><Badge tone={t.method === "cash" ? "amber" : "green"}>{t.method === "cash" ? "เงินสด" : "โอน"}</Badge></td>
+                  <td className="px-5 py-3.5"><Badge tone="green">โอน</Badge></td>
                   <td className="px-5 py-3.5">{t.staffName}</td>
                   <td className="px-5 py-3.5 text-muted">{dateTime(t.createdAt)}</td>
                 </tr>
@@ -64,7 +64,7 @@ export default function Topups() {
         {selected && sel && (
           <>
             <InfoRow label="จำนวน" value={`+${num(selected.amount)} โทเคน`} tone="green" />
-            <InfoRow label="รับเงิน" value={`${num(selected.amount)} บาท · ${selected.method === "cash" ? "เงินสด" : "โอน"}`} />
+            <InfoRow label="ลูกค้าโอน" value={`${num(selected.amount)} บาท · เข้าบัญชีของงาน`} />
             <InfoRow label="เติมโดย" value={selected.staffName} />
             <InfoRow label="เวลา" value={dateTime(selected.createdAt)} />
             <p className="mb-1 mt-4 font-semibold">โทเคนเข้าบัตร</p>

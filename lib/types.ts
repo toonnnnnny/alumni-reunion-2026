@@ -183,3 +183,16 @@ export const SIZES = ["S", "M", "L", "XL", "XXL"];
 export const TICKET_PRICE = 1000;
 export const BONUS_TOKENS = 50;
 export const EVENT_DATE = "15 ธ.ค. 2569";
+
+// บัญชีรับเงินของงาน (Admin เป็นผู้ดูแล) ใช้ทั้งตอนซื้อบัตร/เสื้อ และตอน Staff เติมโทเคน
+// Staff ไม่รับเงินสด: ลูกค้าโอนเข้าบัญชีนี้ผ่าน QR เท่านั้น
+export const PAY_ACCOUNT = {
+  name: "ALUMNI REUNION 2026",
+  bank: "ธนาคารกรุงเทพ",
+  number: "123-4-56789-0",
+};
+
+// ข้อความที่ใส่ใน QR รับเงิน (จำลองรูปแบบพร้อมเพย์ ไม่ได้ใช้โอนเงินจริง)
+export function payQrText(amount?: number): string {
+  return `PROMPTPAY|${PAY_ACCOUNT.name}|${amount && amount > 0 ? amount.toFixed(2) : ""}`;
+}

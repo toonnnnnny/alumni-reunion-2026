@@ -14,7 +14,7 @@ export function TxList({ txs, empty = "ยังไม่มีรายกา�
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-semibold">{tx.type === "sale" ? tx.shopName : label[tx.type]}</p>
             <p className="truncate text-xs text-muted">
-              {tx.type === "sale" ? tx.items.map((i) => `${i.name}×${i.qty}`).join(", ") : tx.type === "topup" ? `โดย ${tx.staffName} · ${tx.method === "cash" ? "เงินสด" : "โอน"}` : tx.ticketNo}
+              {tx.type === "sale" ? tx.items.map((i) => `${i.name}×${i.qty}`).join(", ") : tx.type === "topup" ? `โดย ${tx.staffName} · โอน` : tx.ticketNo}
               {" · "}
               {dateTime(tx.createdAt)}
             </p>

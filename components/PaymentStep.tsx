@@ -7,6 +7,7 @@ import { QrImage } from "./QrImage";
 import { SlipPicker } from "./SlipPicker";
 import { Banner, Button, Card, ErrorText } from "./ui";
 import { baht } from "@/lib/format";
+import { PAY_ACCOUNT, payQrText } from "@/lib/types";
 
 export function PaymentStep({ total, onSubmit, note }: { total: number; onSubmit: (slip: string) => Promise<void>; note?: React.ReactNode }) {
   const [slip, setSlip] = useState("");
@@ -31,11 +32,11 @@ export function PaymentStep({ total, onSubmit, note }: { total: number; onSubmit
       <Card className="text-center">
         <p className="text-sm text-muted">สแกนจ่ายด้วยแอปธนาคาร (Thai QR)</p>
         <div className="mx-auto my-4 w-fit rounded-2xl border border-line p-3">
-          <QrImage text={`PROMPTPAY|ALUMNI REUNION 2026|${total.toFixed(2)}`} size={200} />
+          <QrImage text={payQrText(total)} size={200} />
         </div>
         <p className="text-sm text-muted">ยอดที่ต้องโอน</p>
         <p className="text-3xl font-bold">{baht(total)}</p>
-        <p className="mt-1 text-xs text-muted">บัญชี ALUMNI REUNION 2026 · ธนาคารกรุงเทพ (QR จำลองสำหรับงานส่ง)</p>
+        <p className="mt-1 text-xs text-muted">บัญชี {PAY_ACCOUNT.name} · {PAY_ACCOUNT.bank} {PAY_ACCOUNT.number} (QR จำลองสำหรับงานส่ง)</p>
       </Card>
       {note}
       <SlipPicker value={slip} onChange={setSlip} />

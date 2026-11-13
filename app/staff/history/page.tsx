@@ -1,5 +1,5 @@
 "use client";
-// ประวัติการเติมโทเคนของ Staff คนนี้ + ยอดเงินสด/โอน ไว้กระทบยอดตอนส่งเงินให้ Admin
+// ประวัติการเติมโทเคนของ Staff คนนี้ + ยอดที่ลูกค้าโอนเข้าบัญชีของงาน (ไม่รับเงินสด)
 
 import { listRecords } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
@@ -8,23 +8,22 @@ import { dateTime, num } from "@/lib/format";
 import { TopBar, TabletBody } from "@/components/shells";
 import { Badge, Card, EmptyState, StatCard } from "@/components/ui";
 
+
 export default function StaffHistory() {
   const { account } = useAuth();
   const { data } = usePolling(async () =>
     (await listRecords("tx")).filter((t) => t.type === "topup" && t.staffId === account?.id).sort((a, b) => b.createdAt.localeCompare(a.createdAt))
   );
   const list = data ?? [];
-  const cash = list.filter((t) => t.method === "cash").reduce((s, t) => s + t.amount, 0);
-  const transfer = list.filter((t) => t.method === "transfer").reduce((s, t) => s + t.amount, 0);
+  const transfer = list.reduce((s, t) => s + t.amount, 0);
 
   return (
     <>
       <TopBar title="ประวัติการเติมของฉัน" subtitle={account?.servicePoint} back="/staff" />
       <TabletBody>
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2">
           <StatCard label="รายการทั้งหมด" value={list.length} unit="รายการ" />
-          <StatCard label="เงินสดที่ต้องส่ง Admin" value={num(cash)} unit="บาท" tone="amber" />
-          <StatCard label="รับโอน" value={num(transfer)} unit="บาท" tone="green" />
+          <StatCard label="ยอดโอนเข้าบัญชีงาน" value={num(transfer)} unit="บาท" tone="green" />
         </div>
         {list.length === 0 ? (
           <EmptyState title="ยังไม่มีรายการเติม" />
@@ -36,7 +35,7 @@ export default function StaffHistory() {
                   <p className="font-semibold">{t.ticketNo} · +{num(t.amount)} โทเคน</p>
                   <p className="text-xs text-muted">{t.txNo} · {dateTime(t.createdAt)}</p>
                 </div>
-                <Badge tone={t.method === "cash" ? "amber" : "green"}>{t.method === "cash" ? "เงินสด" : "โอน"}</Badge>
+                <Badge tone="green">โอน</Badge>
               </div>
             ))}
           </Card>

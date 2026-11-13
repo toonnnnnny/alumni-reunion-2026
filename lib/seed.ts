@@ -104,7 +104,7 @@ const txBase = { shopId: "", shopName: "", items: [], staffId: "", staffName: ""
 const txs: Transaction[] = [
   { id: "13", kind: "tx", txNo: "TX-0001", ticketNo: "T-001", type: "bonus", amount: 50, ...txBase, createdAt: t("2026-11-20T15:02:00+07:00") },
   { id: "14", kind: "tx", txNo: "TX-0002", ticketNo: "T-002", type: "bonus", amount: 50, ...txBase, createdAt: t("2026-11-20T15:02:00+07:00") },
-  { id: "15", kind: "tx", txNo: "TX-0003", ticketNo: "T-001", type: "topup", amount: 50, ...txBase, staffId: "4", staffName: "TEST STAFF", method: "cash", createdAt: t("2026-12-15T18:10:00+07:00") },
+  { id: "15", kind: "tx", txNo: "TX-0003", ticketNo: "T-001", type: "topup", amount: 50, ...txBase, staffId: "4", staffName: "TEST STAFF", method: "transfer", createdAt: t("2026-12-15T18:10:00+07:00") },
   { id: "16", kind: "tx", txNo: "TX-0004", ticketNo: "T-001", type: "sale", amount: -65, ...txBase, shopId: "1", shopName: "Bubble Tea Bar", items: [{ name: "ชานมไข่มุก", qty: 1, price: 35 }, { name: "ชาไทย", qty: 1, price: 30 }], createdAt: t("2026-12-15T18:25:00+07:00") },
   { id: "17", kind: "tx", txNo: "TX-0005", ticketNo: "T-001", type: "sale", amount: -15, ...txBase, shopId: "1", shopName: "Bubble Tea Bar", items: [{ name: "บราวนี่", qty: 1, price: 15 }], createdAt: t("2026-12-15T18:40:00+07:00") },
   { id: "18", kind: "tx", txNo: "TX-0006", ticketNo: "T-002", type: "sale", amount: -25, ...txBase, shopId: "3", shopName: "Snack Corner", items: [{ name: "ป๊อปคอร์น", qty: 1, price: 25 }], createdAt: t("2026-12-15T18:45:00+07:00") },
