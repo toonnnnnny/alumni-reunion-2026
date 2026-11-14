@@ -1,6 +1,6 @@
 "use client";
 // QR รับเงิน: Staff เปิดให้ลูกค้าสแกนโอนเข้าบัญชีของงาน (Admin) ก่อนเติมโทเคน
-// Staff ไม่รับเงินสด เงินเข้าบัญชี Admin โดยตรง Admin กระทบยอดกับหน้า "รายการเติมโทเคน"
+// Staff ไม่รับเงินสด เงินเข้าบัญชี Admin โดยตรง Admin ตรวจสอบธุรกรรมได้ที่หน้า "รายการเติมโทเคน"
 
 import { TopBar, TabletBody } from "@/components/shells";
 import { PayQrCard } from "@/components/PayQrCard";

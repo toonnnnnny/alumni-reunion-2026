@@ -1,6 +1,6 @@
 "use client";
 // รายการเติมโทเคนทั้งหมด: ดูว่าโทเคนเข้าบัตร/ผู้ใช้คนไหน เติมโดย Staff คนไหน
-// ลูกค้าโอนเข้าบัญชีของงานทุกรายการ (ไม่รับเงินสด) Admin ใช้หน้านี้กระทบยอดกับบัญชีธนาคาร
+// ทุกรายการเป็นการโอนเงิน (ไม่รับเงินสด) Admin ใช้หน้านี้ตรวจสอบธุรกรรมย้อนหลัง
 // การ์ดสรุปมีแค่ 2 ใบ (โทเคนที่เติมวันนี้, รายการเติมวันนี้) เพื่อไม่ให้สับสน
 
 import Link from "next/link";
@@ -35,7 +35,7 @@ export default function Topups() {
         <StatCard label="โทเคนที่เติมวันนี้" value={num(today.reduce((s, t) => s + t.amount, 0))} unit="โทเคน" icon={<Wallet className="size-5" />} />
         <StatCard label="รายการเติมวันนี้" value={today.length} unit="รายการ" icon={<ReceiptText className="size-5" />} />
       </div>
-      <p className="text-sm text-muted">ลูกค้าโอนเข้าบัญชีของงานทุกรายการ ใช้ยอดในหน้านี้กระทบกับรายการเงินเข้าในบัญชีธนาคาร</p>
+      <p className="text-sm text-muted">ทุกรายการเป็นการโอนเงิน ใช้ตรวจสอบธุรกรรมการเติมโทเคนย้อนหลังได้</p>
       {list.length === 0 ? (
         <EmptyState title="ยังไม่มีรายการเติม" />
       ) : (

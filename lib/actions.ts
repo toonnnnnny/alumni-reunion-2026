@@ -122,7 +122,7 @@ export async function checkIn(ticket: Ticket): Promise<Ticket> {
   return updateRecord("ticket", ticket.id, { checkedIn: true, checkinAt: nowIso() });
 }
 
-// Staff เติมโทเคน: ลูกค้าโอนเข้าบัญชีของงาน (ไม่รับเงินสด) บันทึก method ไว้ให้ Admin กระทบยอดได้
+// Staff เติมโทเคน: ลูกค้าโอนเข้าบัญชีของงาน (ไม่รับเงินสด) บันทึก method ไว้ให้ Admin ตรวจสอบธุรกรรมย้อนหลังได้
 export async function topUp(ticket: Ticket, amount: number, method: "cash" | "transfer", staff: Account): Promise<Ticket> {
   if (amount <= 0) throw new Error("จำนวนต้องมากกว่า 0");
   const latest = await getRecord("ticket", ticket.id);
