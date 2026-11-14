@@ -34,7 +34,9 @@ async function requestList<T>(path: string): Promise<T[]> {
 // ---------------- accounts ----------------
 
 export async function listAccounts(): Promise<Account[]> {
-  return requestList<Account>("/accounts");
+  const rows = await requestList<Account>("/accounts");
+  // ข้ามแถวว่างที่ไม่มี username (เช่นแถวที่ MockAPI สร้างเองจากแถบปรับจำนวนข้อมูล) กันหน้าเว็บพัง
+  return rows.filter((a) => typeof a.username === "string" && a.username !== "");
 }
 
 export async function getAccount(id: string): Promise<Account> {
