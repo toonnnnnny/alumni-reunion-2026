@@ -98,10 +98,10 @@ export async function resubmitSlip(order: Order, slipImage: string): Promise<voi
 
 // ---------------- Packing ----------------
 
-export async function moveShip(order: Order, to: ShipStatus, tracking = ""): Promise<void> {
+export async function moveShip(order: Order, to: ShipStatus): Promise<void> {
   if (!order.shipStatus || !canMoveShip(order.shipStatus, to)) throw new Error("เปลี่ยนสถานะนี้ไม่ได้");
-  await updateRecord("order", order.id, { shipStatus: to, tracking: tracking || order.tracking, updatedAt: nowIso() });
-  const text: Record<string, string> = { packed: "แพ็คเสื้อเรียบร้อย รอจัดส่ง", shipped: `จัดส่งแล้ว เลขพัสดุ ${tracking}`, picked: "รับเสื้อที่หน้างานแล้ว" };
+  await updateRecord("order", order.id, { shipStatus: to, updatedAt: nowIso() });
+  const text: Record<string, string> = { packed: "แพ็คเสื้อเรียบร้อย รอจัดส่ง", shipped: "จัดส่งเสื้อแล้ว", picked: "รับเสื้อที่หน้างานแล้ว" };
   if (text[to]) await notify("user", "อัปเดตคำสั่งซื้อเสื้อ", `${order.orderNo} ${text[to]}`, `/user/orders/${order.id}`, order.userId);
 }
 

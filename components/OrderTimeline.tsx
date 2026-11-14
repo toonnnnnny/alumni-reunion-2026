@@ -9,7 +9,7 @@ export function OrderTimeline({ order }: { order: Order }) {
     steps.push({ label: "ได้รับบัตรและ QR Code", done: order.status === "paid" });
   } else if (order.delivery === "ship") {
     steps.push({ label: "แพ็คเสร็จ", done: order.shipStatus === "packed" || order.shipStatus === "shipped" });
-    steps.push({ label: `จัดส่งแล้ว${order.tracking ? ` · ${order.tracking}` : ""}`, done: order.shipStatus === "shipped" });
+    steps.push({ label: "จัดส่งแล้ว", done: order.shipStatus === "shipped" });
   } else {
     steps.push({ label: "รับเสื้อที่หน้างานแล้ว", done: order.shipStatus === "picked" });
   }
