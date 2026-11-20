@@ -42,7 +42,7 @@ export default function IssueDetail({ params }: { params: Promise<{ id: string }
           <InfoRow label="แจ้งโดย" value={`${issue.staffName} · ${issue.servicePoint}`} />
           <InfoRow label="เวลา" value={dateTime(issue.createdAt)} />
           <p className="mt-3 rounded-xl bg-paper p-4 text-sm">{issue.detail}</p>
-          {issue.ticketNo && <p className="mt-3 text-sm"><Link href="/admin/buyers" className="text-navy underline">ค้นหาบัตร {issue.ticketNo} ในหน้าผู้ซื้อ</Link></p>}
+          {issue.ticketNo && <p className="mt-3 text-sm"><Link href="/admin/buyers" className="text-navy underline">ค้นหาบัตร {issue.ticketNo} ในหน้าบัญชีของผู้เข้าร่วม</Link></p>}
         </Card>
         <Card className="h-fit space-y-3">
           <CardTitle>การดำเนินการ</CardTitle>

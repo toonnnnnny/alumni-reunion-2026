@@ -1,5 +1,5 @@
 "use client";
-// ผู้ซื้อบัตร: บัญชี role user ทั้งหมด พร้อมจำนวนบัตรและโทเคนรวม + ค้นหา + แบ่งหน้า
+// บัญชีของผู้เข้าร่วม: บัญชี role user ทั้งหมด พร้อมจำนวนบัตรและโทเคนรวม + ค้นหา + แบ่งหน้า
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -20,7 +20,7 @@ export default function Buyers() {
     return { users: accounts.filter((a) => a.role === "user"), tickets };
   });
 
-  if (isLoading || !data) return <AdminFrame title="ผู้ซื้อบัตร"><Loading /></AdminFrame>;
+  if (isLoading || !data) return <AdminFrame title="บัญชีของผู้เข้าร่วม"><Loading /></AdminFrame>;
 
   const rows = data.users
     .map((u) => {
@@ -32,9 +32,9 @@ export default function Buyers() {
   const shown = rows.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
-    <AdminFrame title="ผู้ซื้อบัตร" subtitle="บัญชีผู้ซื้อ บัตร และโทเคน">
+    <AdminFrame title="บัญชีของผู้เข้าร่วม" subtitle="บัญชีผู้ซื้อ บัตร และโทเคน">
       <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard label="ผู้ซื้อทั้งหมด" value={data.users.length} unit="คน" />
+        <StatCard label="บัญชีทั้งหมด" value={data.users.length} unit="คน" />
         <StatCard label="บัตรทั้งหมด" value={data.tickets.length} unit="ใบ" />
         <StatCard label="โทเคนคงเหลือในระบบ" value={num(data.tickets.reduce((s, t) => s + t.tokens, 0))} unit="โทเคน" tone="amber" />
       </div>

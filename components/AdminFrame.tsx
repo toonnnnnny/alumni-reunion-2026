@@ -25,7 +25,7 @@ export function AdminFrame({ title, subtitle, back, children }: { title: string;
   const nav: NavItem[] = [
     { href: "/admin", label: "Dashboard", icon: <LayoutDashboard />, exact: true },
     { href: "/admin/payments", label: "อนุมัติการชำระเงิน", icon: <CreditCard />, count: counts.slips },
-    { href: "/admin/buyers", label: "ผู้ซื้อบัตร", icon: <Users /> },
+    { href: "/admin/buyers", label: "บัญชีของผู้เข้าร่วม", icon: <Users /> },
     { href: "/admin/topups", label: "รายการเติมโทเคน", icon: <Wallet /> },
     { href: "/admin/shops", label: "ร้านค้าและเมนู", icon: <Store />, count: counts.withdrawals },
     { href: "/admin/shirts", label: "เสื้อและสต็อก", icon: <Shirt /> },
