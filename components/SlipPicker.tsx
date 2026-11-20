@@ -3,7 +3,7 @@
 // ใช้ useRef กับ input type=file เพื่อเปิดหน้าต่างเลือกไฟล์จากปุ่มของเราเอง
 
 // useRef = จับ input เลือกไฟล์ที่ซ่อนอยู่, useState = ตัวแปรของหน้า
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ImagePlus } from "lucide-react";
 // resizeImage = ย่อรูป (lib/image.ts)
 import { resizeImage } from "@/lib/image";
@@ -11,7 +11,7 @@ import { cx } from "./ui";
 
 // value = รูปปัจจุบัน, onChange = ส่งรูปกลับไปให้หน้าแม่
 // maxSize/maxChars = ขนาดรูปสูงสุดหลังย่อ (ใช้กับรูปเสื้อที่ต้องเล็กกว่าสลิป), alt = คำอธิบายรูป
-export function SlipPicker({ value, onChange, title = "อัปโหลดสลิปการโอน", hint = "JPG, PNG · ระบบย่อรูปให้อัตโนมัติ", maxSize, maxChars, alt = "สลิป" }: { value: string; onChange: (dataUrl: string) => void; title?: string; hint?: string; maxSize?: number; maxChars?: number; alt?: string }) {
+export function SlipPicker({ value, onChange, title = "อัปโหลดสลิปการโอน", hint = "JPG, PNG · วางรูปด้วย Ctrl/Cmd+V ได้", maxSize, maxChars, alt = "สลิป" }: { value: string; onChange: (dataUrl: string) => void; title?: string; hint?: string; maxSize?: number; maxChars?: number; alt?: string }) {
   // ตัวชี้ไปที่ input type=file
   const inputRef = useRef<HTMLInputElement>(null);
   // error
@@ -36,6 +36,32 @@ export function SlipPicker({ value, onChange, title = "อัปโหลดส�
       setBusy(false);
     }
   }
+
+  // วางรูปจากคลิปบอร์ด: คลิกขวารูปในเว็บอื่น เลือกคัดลอกรูปภาพ แล้วกด Ctrl/Cmd+V ในหน้านี้ได้เลย
+  // เก็บฟังก์ชันล่าสุดไว้ใน ref เพื่อให้ตัวฟัง paste ตัวเดียวเรียกใช้ได้ตลอด
+  const handleRef = useRef(handleFile);
+  useEffect(() => {
+    handleRef.current = handleFile;
+  });
+  useEffect(() => {
+    function onPaste(e: ClipboardEvent) {
+      const items = e.clipboardData?.items;
+      if (!items) return;
+      for (const item of Array.from(items)) {
+        // เฉพาะรูปเท่านั้น ถ้าเป็นข้อความธรรมดาปล่อยให้วางลงช่องกรอกตามปกติ
+        if (item.kind === "file" && item.type.startsWith("image/")) {
+          const file = item.getAsFile();
+          if (file) {
+            e.preventDefault();
+            handleRef.current(file);
+            return;
+          }
+        }
+      }
+    }
+    document.addEventListener("paste", onPaste);
+    return () => document.removeEventListener("paste", onPaste);
+  }, []);
 
   return (
     // ส่วนหน้าตา

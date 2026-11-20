@@ -129,7 +129,7 @@ export default function Shirts() {
         <div className="space-y-3">
           <div>
             <p className="mb-1 text-sm font-semibold">รูปเสื้อ</p>
-            <SlipPicker value={newShirt.image} onChange={(image) => setNewShirt({ ...newShirt, image })} title="อัปโหลดรูปเสื้อ" hint="JPG, PNG · ระบบย่อรูปให้อัตโนมัติ" maxSize={480} maxChars={45000} alt="รูปเสื้อ" />
+            <SlipPicker value={newShirt.image} onChange={(image) => setNewShirt({ ...newShirt, image })} title="อัปโหลดรูปเสื้อ" hint="JPG, PNG · วางรูปด้วย Ctrl/Cmd+V ได้" maxSize={480} maxChars={45000} alt="รูปเสื้อ" />
           </div>
           <Field label="ชื่อเสื้อ" value={newShirt.name} onChange={(e) => setNewShirt({ ...newShirt, name: e.target.value })} />
           <Field label="ราคา (บาท)" inputMode="numeric" value={newShirt.price} onChange={(e) => setNewShirt({ ...newShirt, price: e.target.value.replace(/\D/g, "") })} />
