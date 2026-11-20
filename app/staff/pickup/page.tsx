@@ -1,5 +1,6 @@
 "use client";
-// ส่งมอบเสื้อ (คำสั่งซื้อแบบรับที่หน้างาน): สแกน/พิมพ์เลขคำสั่งซื้อ -> ตรวจรายการ -> ยืนยันส่งมอบ
+// ส่งมอบเสื้อ (คำสั่งซื้อแบบรับที่หน้างาน): กรอกเลขคำสั่งซื้อ -> ตรวจรายการ -> ยืนยันส่งมอบ
+// ไม่มีการสแกน QR เพราะตอนส่งมอบหน้างานสแกนจริงไม่ได้ (ลูกค้าบอกเลขคำสั่งซื้อให้ Staff พิมพ์)
 
 import { ShirtThumb } from "@/components/ShirtImage";
 import { useState } from "react";
@@ -9,21 +10,30 @@ import { moveShip } from "@/lib/actions";
 import { shipLabel } from "@/lib/status";
 import type { Order } from "@/lib/types";
 import { TopBar, TabletBody } from "@/components/shells";
-import { QrScanner } from "@/components/QrScanner";
-import { Badge, Button, Card, ErrorText, InfoRow } from "@/components/ui";
+import { Badge, Button, Card, ErrorText, Field, InfoRow } from "@/components/ui";
 
 export default function Pickup() {
   const [order, setOrder] = useState<Order | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
+  // เลขคำสั่งซื้อที่ Staff พิมพ์
+  const [code, setCode] = useState("");
 
-  async function handleScan(code: string) {
+  async function handleSearch() {
     setError("");
-    const orders = await listRecords("order").catch(() => []);
-    const found = orders.find((o) => o.orderNo.toUpperCase() === code.trim().toUpperCase() && o.type === "shirt");
-    if (!found) return setError(`ไม่พบคำสั่งซื้อเสื้อ "${code}"`);
-    setOrder(found);
+    if (!code.trim()) return setError("กรอกเลขคำสั่งซื้อ");
+    setBusy(true);
+    try {
+      const orders = await listRecords("order");
+      const found = orders.find((o) => o.orderNo.toUpperCase() === code.trim().toUpperCase() && o.type === "shirt");
+      if (!found) return setError(`ไม่พบคำสั่งซื้อเสื้อ "${code.trim()}"`);
+      setOrder(found);
+    } catch {
+      setError("ค้นหาไม่สำเร็จ ลองใหม่อีกครั้ง");
+    } finally {
+      setBusy(false);
+    }
   }
 
   async function handOver() {
@@ -43,6 +53,7 @@ export default function Pickup() {
     setOrder(null);
     setDone(false);
     setError("");
+    setCode("");
   }
 
   // เหตุผลที่ส่งมอบไม่ได้
@@ -55,7 +66,12 @@ export default function Pickup() {
         {!order && (
           <>
             <ErrorText text={error} />
-            <QrScanner onResult={handleScan} manualLabel="กรอกเลขคำสั่งซื้อ" manualPlaceholder="เช่น ORD-240005" />
+            <Card>
+              <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }} className="space-y-4">
+                <Field label="เลขคำสั่งซื้อ" placeholder="เช่น ORD-240005" value={code} onChange={(e) => setCode(e.target.value)} autoFocus autoCapitalize="characters" autoComplete="off" />
+                <Button type="submit" full loading={busy}>ค้นหาคำสั่งซื้อ</Button>
+              </form>
+            </Card>
           </>
         )}
         {order && !done && (
