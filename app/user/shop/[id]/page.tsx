@@ -58,7 +58,7 @@ export default function ShirtDetail({ params }: { params: Promise<{ id: string }
       <TopBar title={shirt.name} back="/user/shop" />
       <MobileBody>
         {/* รูปเสื้อสี่เหลี่ยมจัตุรัส */}
-        <ShirtImage name={shirt.name} className="aspect-square rounded-3xl" iconClass="size-28" />
+        <ShirtImage name={shirt.name} image={shirt.image} className="aspect-square rounded-3xl" iconClass="size-28" />
         {/* ชื่อ ราคา รายละเอียด */}
         <Card>
           <p className="text-lg font-bold">{shirt.name}</p>

@@ -53,7 +53,7 @@ export default function Shop() {
             return (
               // การ์ดเสื้อ กดแล้วไปหน้ารายละเอียด /user/shop/รหัสเสื้อ
               <Link key={shirt.id} href={`/user/shop/${shirt.id}`} className="overflow-hidden rounded-2xl border border-line bg-white">
-                <ShirtImage name={shirt.name} className="aspect-square" />
+                <ShirtImage name={shirt.name} image={shirt.image} className="aspect-square" />
                 <div className="p-3">
                   <p className="truncate text-sm font-semibold">{shirt.name}</p>
                   <p className="font-bold">{baht(shirt.price)}</p>

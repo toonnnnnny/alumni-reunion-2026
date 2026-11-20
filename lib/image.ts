@@ -1,8 +1,9 @@
 // ย่อรูปสลิปก่อนส่ง เพราะ MockAPI เก็บไฟล์ไม่ได้ ต้องเก็บเป็นข้อความ base64
-// ย่อให้กว้างไม่เกิน maxWidth แล้วแปลงเป็น JPEG คุณภาพ 0.7 ข้อมูลจะเล็กพอส่งผ่าน API
+// ย่อให้ด้านยาวสุดไม่เกิน maxSize แล้วแปลงเป็น JPEG ลดคุณภาพทีละขั้นจนข้อความ base64 ไม่เกิน maxChars
+// กันรูปสลิปที่เป็นภาพหน้าจอมือถือยาวๆ ใหญ่เกินจน MockAPI ปฏิเสธ (400)
 
 // รับไฟล์รูป คืนค่าเป็นข้อความ base64 (Promise = ต้อง await รอ)
-export function resizeImage(file: File, maxWidth = 600): Promise<string> {
+export function resizeImage(file: File, maxSize = 700, maxChars = 60000): Promise<string> {
   return new Promise((resolve, reject) => {
     // FileReader = ตัวอ่านไฟล์ของเบราว์เซอร์
     const reader = new FileReader();
@@ -16,8 +17,8 @@ export function resizeImage(file: File, maxWidth = 600): Promise<string> {
       img.onerror = () => reject(new Error("ไฟล์นี้ไม่ใช่รูปภาพ"));
       // รูปโหลดเสร็จ -> ย่อ
       img.onload = () => {
-        // อัตราย่อ: กว้างไม่เกิน 600px (รูปเล็กอยู่แล้วไม่ขยาย)
-        const scale = Math.min(1, maxWidth / img.width);
+        // อัตราย่อ: ด้านที่ยาวที่สุดไม่เกิน maxSize (รูปเล็กอยู่แล้วไม่ขยาย)
+        const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
         // สร้าง canvas (กระดานวาดรูป)
         const canvas = document.createElement("canvas");
         // ตั้งขนาด canvas ตามอัตราย่อ
@@ -28,8 +29,14 @@ export function resizeImage(file: File, maxWidth = 600): Promise<string> {
         if (!ctx) return reject(new Error("เบราว์เซอร์ไม่รองรับ"));
         // วาดรูปลง canvas ในขนาดที่ย่อแล้ว
         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        // แปลง canvas เป็น JPEG คุณภาพ 70% ในรูปข้อความ base64 แล้วส่งกลับ
-        resolve(canvas.toDataURL("image/jpeg", 0.7));
+        // แปลงเป็น JPEG base64 เริ่มคุณภาพ 70% ถ้ายังยาวเกินก็ลดลงทีละ 10% (ต่ำสุด 30%)
+        let quality = 0.7;
+        let out = canvas.toDataURL("image/jpeg", quality);
+        while (out.length > maxChars && quality > 0.3) {
+          quality -= 0.1;
+          out = canvas.toDataURL("image/jpeg", quality);
+        }
+        resolve(out);
       };
       // ใส่ข้อมูลที่อ่านได้ให้รูป -> รูปจะเริ่มโหลด
       img.src = reader.result as string;

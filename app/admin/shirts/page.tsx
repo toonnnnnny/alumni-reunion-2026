@@ -11,12 +11,13 @@ import { totalStock } from "@/lib/stock";
 import { SIZES, type Shirt } from "@/lib/types";
 import { AdminFrame } from "@/components/AdminFrame";
 import { Badge, Button, Card, ErrorText, Field, Loading, Modal, StatCard } from "@/components/ui";
+import { SlipPicker } from "@/components/SlipPicker";
 
 export default function Shirts() {
   const { data, isLoading, reload } = usePolling(() => listRecords("shirt"), 10000);
   const [editing, setEditing] = useState<Shirt | null>(null);
   const [adding, setAdding] = useState(false);
-  const [newShirt, setNewShirt] = useState({ name: "", price: "", detail: "", colors: "" });
+  const [newShirt, setNewShirt] = useState({ name: "", price: "", detail: "", colors: "", image: "" });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
@@ -51,10 +52,10 @@ export default function Shirts() {
     try {
       const stock: Shirt["stock"] = {};
       colors.forEach((c) => (stock[c] = Object.fromEntries(SIZES.map((s) => [s, 0]))));
-      await createRecord("shirt", { name: newShirt.name, price, detail: newShirt.detail, colors, stock, createdAt: nowIso() });
+      await createRecord("shirt", { name: newShirt.name, price, detail: newShirt.detail, colors, stock, ...(newShirt.image ? { image: newShirt.image } : {}), createdAt: nowIso() });
       await reload();
       setAdding(false);
-      setNewShirt({ name: "", price: "", detail: "", colors: "" });
+      setNewShirt({ name: "", price: "", detail: "", colors: "", image: "" });
       setError("");
     } catch (e) {
       setError(e instanceof Error ? e.message : "เพิ่มไม่สำเร็จ");
@@ -76,7 +77,7 @@ export default function Shirts() {
           <Card key={shirt.id} className="overflow-x-auto">
             <div className="mb-3 flex items-start justify-between gap-3">
               <div className="flex items-center gap-3">
-                <ShirtThumb name={shirt.name} size="size-16" />
+                <ShirtThumb name={shirt.name} image={shirt.image} size="size-16" />
                 <div>
                 <p className="font-semibold">{shirt.name}</p>
                 <p className="text-sm text-muted">{baht(shirt.price)} · คงเหลือ {totalStock(shirt.stock)} ตัว</p>
@@ -126,6 +127,10 @@ export default function Shirts() {
 
       <Modal open={adding} onClose={() => setAdding(false)} title="เพิ่มเสื้อแบบใหม่" footer={<><Button loading={busy} onClick={addShirt} className="flex-1">เพิ่ม</Button><Button variant="outline" onClick={() => setAdding(false)} className="flex-1">ยกเลิก</Button></>}>
         <div className="space-y-3">
+          <div>
+            <p className="mb-1 text-sm font-semibold">รูปเสื้อ (ไม่บังคับ)</p>
+            <SlipPicker value={newShirt.image} onChange={(image) => setNewShirt({ ...newShirt, image })} title="อัปโหลดรูปเสื้อ" hint="JPG, PNG · ระบบย่อรูปให้อัตโนมัติ" maxSize={480} maxChars={45000} alt="รูปเสื้อ" />
+          </div>
           <Field label="ชื่อเสื้อ" value={newShirt.name} onChange={(e) => setNewShirt({ ...newShirt, name: e.target.value })} />
           <Field label="ราคา (บาท)" inputMode="numeric" value={newShirt.price} onChange={(e) => setNewShirt({ ...newShirt, price: e.target.value.replace(/\D/g, "") })} />
           <Field label="รายละเอียด" value={newShirt.detail} onChange={(e) => setNewShirt({ ...newShirt, detail: e.target.value })} />

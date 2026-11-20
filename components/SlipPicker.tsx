@@ -10,7 +10,8 @@ import { resizeImage } from "@/lib/image";
 import { cx } from "./ui";
 
 // value = รูปปัจจุบัน, onChange = ส่งรูปกลับไปให้หน้าแม่
-export function SlipPicker({ value, onChange, title = "อัปโหลดสลิปการโอน", hint = "JPG, PNG · ระบบย่อรูปให้อัตโนมัติ" }: { value: string; onChange: (dataUrl: string) => void; title?: string; hint?: string }) {
+// maxSize/maxChars = ขนาดรูปสูงสุดหลังย่อ (ใช้กับรูปเสื้อที่ต้องเล็กกว่าสลิป), alt = คำอธิบายรูป
+export function SlipPicker({ value, onChange, title = "อัปโหลดสลิปการโอน", hint = "JPG, PNG · ระบบย่อรูปให้อัตโนมัติ", maxSize, maxChars, alt = "สลิป" }: { value: string; onChange: (dataUrl: string) => void; title?: string; hint?: string; maxSize?: number; maxChars?: number; alt?: string }) {
   // ตัวชี้ไปที่ input type=file
   const inputRef = useRef<HTMLInputElement>(null);
   // error
@@ -27,7 +28,7 @@ export function SlipPicker({ value, onChange, title = "อัปโหลดส�
     setError("");
     try {
       // ย่อรูป -> ได้ข้อความ base64 -> ส่งให้หน้าแม่เก็บ
-      onChange(await resizeImage(file));
+      onChange(await resizeImage(file, maxSize, maxChars));
     } catch (e) {
       // ไฟล์ไม่ใช่รูป / อ่านไม่ได้ -> แสดง error
       setError(e instanceof Error ? e.message : "อ่านรูปไม่สำเร็จ");
@@ -48,7 +49,7 @@ export function SlipPicker({ value, onChange, title = "อัปโหลดส�
         {/* มีรูปแล้ว -> แสดงตัวอย่างสลิป / ยังไม่มี -> ไอคอนรูป */}
         {value ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={value} alt="สลิป" className="max-h-72 rounded-xl object-contain" />
+          <img src={value} alt={alt} className="max-h-72 rounded-xl object-contain" />
         ) : (
           <ImagePlus className="size-8 text-muted" />
         )}

@@ -14,8 +14,9 @@ export function shirtImage(name: string): string | null {
 }
 
 // รูปเต็มกรอบ (หน้าร้าน/รายละเอียด) ถ้าไม่มีรูปจะแสดงไอคอนแทน
-export function ShirtImage({ name, className = "", iconClass = "size-16" }: { name: string; className?: string; iconClass?: string }) {
-  const src = shirtImage(name);
+// image = รูปที่ Admin อัปโหลดเอง (ถ้ามี) ใช้ก่อนรูปที่จับคู่จากชื่อ
+export function ShirtImage({ name, image, className = "", iconClass = "size-16" }: { name: string; image?: string; className?: string; iconClass?: string }) {
+  const src = image || shirtImage(name);
   return (
     <div className={`grid place-items-center overflow-hidden bg-navy-soft text-navy ${className}`}>
       {src ? (
@@ -29,6 +30,6 @@ export function ShirtImage({ name, className = "", iconClass = "size-16" }: { na
 }
 
 // รูปย่อสำหรับรายการ (ตะกร้า, รับเสื้อ, แพ็กของ, แอดมิน)
-export function ShirtThumb({ name, size = "size-12" }: { name: string; size?: string }) {
-  return <ShirtImage name={name} className={`${size} shrink-0 rounded-xl`} iconClass="size-6" />;
+export function ShirtThumb({ name, image, size = "size-12" }: { name: string; image?: string; size?: string }) {
+  return <ShirtImage name={name} image={image} className={`${size} shrink-0 rounded-xl`} iconClass="size-6" />;
 }

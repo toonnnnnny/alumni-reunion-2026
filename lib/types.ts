@@ -119,6 +119,7 @@ export type Shirt = {
   detail: string;
   colors: string[];
   stock: Record<string, Record<string, number>>; // สี -> ไซซ์ -> จำนวน
+  image?: string; // รูปที่ Admin อัปโหลด (ข้อความ base64) ถ้าไม่มีจะใช้รูปจาก public/shirts ตามชื่อ
   createdAt: string;
 };
 
