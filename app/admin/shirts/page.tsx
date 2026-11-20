@@ -3,8 +3,8 @@
 
 import { ShirtThumb } from "@/components/ShirtImage";
 import { useState } from "react";
-import { Plus } from "lucide-react";
-import { createRecord, listRecords, nowIso, updateRecord } from "@/lib/api";
+import { Plus, Trash2 } from "lucide-react";
+import { createRecord, deleteRecord, listRecords, nowIso, updateRecord } from "@/lib/api";
 import { usePolling } from "@/lib/usePolling";
 import { baht, num } from "@/lib/format";
 import { totalStock } from "@/lib/stock";
@@ -17,6 +17,8 @@ export default function Shirts() {
   const { data, isLoading, reload } = usePolling(() => listRecords("shirt"), 10000);
   const [editing, setEditing] = useState<Shirt | null>(null);
   const [adding, setAdding] = useState(false);
+  // เสื้อที่กำลังจะลบ (เปิดหน้าต่างยืนยัน)
+  const [deleting, setDeleting] = useState<Shirt | null>(null);
   const [newShirt, setNewShirt] = useState({ name: "", price: "", detail: "", colors: "", image: "" });
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -39,6 +41,28 @@ export default function Shirts() {
       setEditing(null);
     } catch (e) {
       setError(e instanceof Error ? e.message : "บันทึกไม่สำเร็จ");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  // ลบเสื้อ: ถ้ายังมีคำสั่งซื้อเสื้อรุ่นนี้ที่ยังไม่ชำระสำเร็จ (รอตรวจ/ถูกปฏิเสธ) จะไม่ให้ลบ เพราะตอนอนุมัติระบบต้องหาเสื้อเพื่อตัดสต็อก
+  async function removeShirt() {
+    if (!deleting) return;
+    setBusy(true);
+    setError("");
+    try {
+      const orders = await listRecords("order");
+      const open = orders.filter((o) => o.type === "shirt" && o.status !== "paid" && o.items.some((i) => i.shirtId === deleting.id));
+      if (open.length > 0) {
+        setError(`ลบไม่ได้ ยังมีคำสั่งซื้อเสื้อรุ่นนี้ที่ยังไม่เสร็จ ${open.length} รายการ (${open.map((o) => o.orderNo).join(", ")}) ให้อนุมัติหรือจัดการก่อน`);
+        return;
+      }
+      await deleteRecord(deleting.id);
+      await reload();
+      setDeleting(null);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "ลบไม่สำเร็จ");
     } finally {
       setBusy(false);
     }
@@ -83,7 +107,10 @@ export default function Shirts() {
                 <p className="text-sm text-muted">{baht(shirt.price)} · คงเหลือ {totalStock(shirt.stock)} ตัว</p>
                 </div>
               </div>
-              <Button size="sm" variant="ghost" onClick={() => setEditing(JSON.parse(JSON.stringify(shirt)))}>แก้ไขสต็อก</Button>
+              <div className="flex shrink-0 gap-2">
+                <Button size="sm" variant="ghost" onClick={() => setEditing(JSON.parse(JSON.stringify(shirt)))}>แก้ไขสต็อก</Button>
+                <Button size="sm" variant="danger" onClick={() => { setError(""); setDeleting(shirt); }}><Trash2 className="size-4" /> ลบ</Button>
+              </div>
             </div>
             <table className="w-full min-w-[420px] text-sm">
               <thead><tr className="text-left text-muted"><th className="py-2">สี</th>{SIZES.map((s) => <th key={s} className="py-2 text-center">{s}</th>)}</tr></thead>
@@ -123,6 +150,14 @@ export default function Shirts() {
             ))}
           </div>
         )}
+      </Modal>
+
+      <Modal open={!!deleting} onClose={() => { setDeleting(null); setError(""); }} title="ลบเสื้อแบบนี้?" footer={<><Button variant="danger" loading={busy} onClick={removeShirt} className="flex-1">ลบเสื้อ</Button><Button variant="outline" onClick={() => { setDeleting(null); setError(""); }} className="flex-1">ยกเลิก</Button></>}>
+        <div className="space-y-3 text-sm">
+          <p>ต้องการลบ <span className="font-semibold">{deleting?.name}</span> ใช่ไหม</p>
+          <p className="text-muted">ลบแล้วเสื้อรุ่นนี้จะหายจากหน้าร้านและกู้คืนไม่ได้ คำสั่งซื้อที่ชำระแล้วยังเก็บชื่อเสื้อเดิมไว้</p>
+          <ErrorText text={error} />
+        </div>
       </Modal>
 
       <Modal open={adding} onClose={() => setAdding(false)} title="เพิ่มเสื้อแบบใหม่" footer={<><Button loading={busy} onClick={addShirt} className="flex-1">เพิ่ม</Button><Button variant="outline" onClick={() => setAdding(false)} className="flex-1">ยกเลิก</Button></>}>
