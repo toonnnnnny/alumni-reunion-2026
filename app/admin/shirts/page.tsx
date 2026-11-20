@@ -128,7 +128,7 @@ export default function Shirts() {
       <Modal open={adding} onClose={() => setAdding(false)} title="เพิ่มเสื้อแบบใหม่" footer={<><Button loading={busy} onClick={addShirt} className="flex-1">เพิ่ม</Button><Button variant="outline" onClick={() => setAdding(false)} className="flex-1">ยกเลิก</Button></>}>
         <div className="space-y-3">
           <div>
-            <p className="mb-1 text-sm font-semibold">รูปเสื้อ (ไม่บังคับ)</p>
+            <p className="mb-1 text-sm font-semibold">รูปเสื้อ</p>
             <SlipPicker value={newShirt.image} onChange={(image) => setNewShirt({ ...newShirt, image })} title="อัปโหลดรูปเสื้อ" hint="JPG, PNG · ระบบย่อรูปให้อัตโนมัติ" maxSize={480} maxChars={45000} alt="รูปเสื้อ" />
           </div>
           <Field label="ชื่อเสื้อ" value={newShirt.name} onChange={(e) => setNewShirt({ ...newShirt, name: e.target.value })} />
